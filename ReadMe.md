@@ -1,4 +1,7 @@
-# SoundflowerBed 2.0.0
+# SoundflowerBed 2.1.0
+
+Forked from https://github.com/mLupine/SoundflowerBed and https://github.com/RogueAmoeba/Soundflower-Original
+Fixed to work on Catalina, also saves default device on menu change 
 
 SoundflowerBed is an application that resides in the menu bar allowing you to tap into Soundflower channels and route them to an audio device.
 
@@ -8,13 +11,10 @@ Clone this project and compile SoundflowerBed using Xcode 6 or head over to the 
 
 ## Changelog
 
-### 2.0.0
+### 2.1.0
 
-* Updated to work on OS X 10.9, 10.10, 10.11, 10.12, 10.13, and 10.14
-* Name changed to SoundflowerBed (from Soundflowerbed)
-* New icons
-* New bundle name
-* Small bug fixes
+* Updated to work on OS X 10.15
+* Default device now saved into preferences on menu change (instead of appp exit)
 
 ## Copyrights
 
@@ -23,6 +23,8 @@ Clone this project and compile SoundflowerBed using Xcode 6 or head over to the 
 * Revised by Tim Place, 16 October 2008, for version 1.4 (<tim@electrotap.com>)
 
 * Fixed for OS X Mavericks and later on 20 December 2014, by Maciej Wilczyński (<maciej@lupine.cc>)
+
+* Revised and fixed for OS X Catalina and later by Anastasiy Safari (<hi@anastasiy.com>)
 
 
 ## License
