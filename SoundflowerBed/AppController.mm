@@ -14,9 +14,6 @@ AudioThruEngine	*gThruEngine2 = NULL;
 AudioThruEngine	*gThruEngine16 = NULL;
 Boolean startOnAwake = false;
 
-#define KEY_SELECTED_DEVICE @"selectedDevice"
-#define KEY_SELECTED_DEVICE_SECONDARY @"selectedDeviceSecondary"
-
 
 void	CheckErr(OSStatus err)
 {
@@ -39,6 +36,7 @@ printf("HardwareListenerProc\n");
        		// An audio device has been added or removed to the system, so lets just start over
             //[NSThread detachNewThreadSelector:@selector(refreshDevices) toTarget:app withObject:nil];
             [app refreshDevices];
+            [app activateHeadphonesIfNeeded];
             break;
 			
         case kAudioHardwarePropertyIsInitingOrExiting:
@@ -163,6 +161,7 @@ OSStatus	DeviceListenerProc (	AudioDeviceID           inDevice,
 					else{ // this could be an aggregate device in the middle of constructing, going from/to 0 chans & we need to add/remove to menu
 						//[NSThread detachNewThreadSelector:@selector(refreshDevices) toTarget:app withObject:nil];
                         [app refreshDevices];
+                        [app activateHeadphonesIfNeeded];
                     }
 				}
 			}
@@ -613,6 +612,9 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 - (void)buildMenu
 {
 	NSMenuItem *item;
+    
+    connectedHeadphonesID = 0;
+    
 
 	mMenu = [[NSMenu alloc] initWithTitle:@"Main Menu"];
     for (int i = 0; i < 64; i++){
@@ -691,6 +693,12 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 				item = [mMenu addItemWithTitle:[NSString stringWithUTF8String: (*i).mName] action:@selector(outputDeviceSelected:) keyEquivalent:@""];
 				[item setTarget:self];
 				mMenuID2[index++] = (*i).mID;
+                
+                if (ad.isHeadphones())
+                {
+                    headphonesName = [NSString stringWithUTF8String: (*i).mName];
+                    printf("!!!!!!! HEADPHONES ARE AT %s",(*i).mName);
+                }
 			}
 		}
 	}
@@ -807,6 +815,8 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 	[item setTarget:self];
 
 	[mSbItem setMenu:mMenu];
+    
+    
 }
 
 - (void)buildDeviceList
@@ -874,6 +884,7 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 - (void)awakeFromNib
 {
     firstTime = true;
+    headphonesName = @"";
 
     [[NSApplication sharedApplication] setDelegate:self];
     
@@ -913,6 +924,8 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 		
 		// now read prefs
 		[self readGlobalPrefs];
+        
+//        [self activateHeadphonesIfNeeded];
 	}
 	
 	// ask to be notified on system sleep to avoid a crash
@@ -1151,22 +1164,6 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
     
     [self writeGlobalPrefs];
 
-//    NSNumber *oldDevice = [[NSUserDefaults standardUserDefaults]
-//        objectForKey:KEY_SELECTED_DEVICE_SECONDARY];
-//    if (oldDevice == NULL)
-//    {
-//        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:val] forKey:KEY_SELECTED_DEVICE_SECONDARY];
-//    } else
-//    {
-//        NSNumber *currentDevice = [[NSUserDefaults standardUserDefaults]
-//            objectForKey:KEY_SELECTED_DEVICE];
-//        if (currentDevice != NULL)
-//        {
-//            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:[currentDevice intValue]] forKey:KEY_SELECTED_DEVICE_SECONDARY];
-//        }
-//    }
-//    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:val] forKey:KEY_SELECTED_DEVICE];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 
@@ -1175,6 +1172,17 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 {
 
 }
+
+- (void)activateHeadphonesIfNeeded
+{
+    int index = [mMenu indexOfItemWithTitle:headphonesName];
+    printf("activateHeadphonesIfNeeded: %d",index);
+    if (index>=0)
+    {
+        [self outputDeviceSelected:[mMenu itemAtIndex:index]];
+    }
+}
+
 
 - (void)readGlobalPrefs
 {

@@ -206,44 +206,64 @@ static char *codeToString(UInt32 code)
     return str;
 }
 
+/**
+ 
+ Actually returns true for bluetooth devices
+ Headphone detection doesn't work so far
+ 
+ */
 bool AudioDevice::isHeadphones()
 {
-//   UInt32 size = sizeof(mID);
-//   verify_noerr(AudioHardwareGetProperty(kAudioHardwarePropertyDefaultSystemOutputDevice, &size, &mID));
-//   NSCAssert((err == noErr), @"AudioHardwareGetProperty failed to get the kAudioHardwarePropertyDefaultSystemOutputDevice property");
-   //To be notified when something is plugged/unplugged into the headphones jack
-   //listen for a kAudioDevicePropertyDataSource or kAudioDevicePropertyDataSources notification on deviceID
-   
-   //Check if headphones are plugged in right now:
-//   UInt32 dataSource;
-//    UInt32 size = sizeof(dataSource);
-//   verify_noerr(AudioDeviceGetProperty(mID, 0, 0, kAudioDevicePropertyDataSource, &size, &dataSource));
+
+        int tran = 0;
+       AudioObjectPropertyAddress transportAddrIn;
+       transportAddrIn.mSelector = kAudioDevicePropertyTransportType;
+       transportAddrIn.mScope = kAudioDevicePropertyScopeInput;
+       transportAddrIn.mElement = kAudioObjectPropertyElementMaster;
+       tran = 0;
+        UInt32 dataSourceIdSize = sizeof(UInt32);
+        UInt32 status = AudioObjectGetPropertyData(mID, &transportAddrIn, 0, NULL, &dataSourceIdSize, &tran);
+       if( status == 0 )
+       {
+           printf("### isHeadphones=tran=%d",tran);
+           switch( tran )
+           {
+               case kAudioDeviceTransportTypeBluetooth:
+               case kAudioDeviceTransportTypeBluetoothLE:
+                   return true; //This means Bluetooth
+                   break;
+               default:
+                   break;
+           }
+           
+       }
+    return false;
 
     
-    AudioObjectPropertyAddress sourceAddr;
-    sourceAddr.mSelector = kAudioDevicePropertyDataSource;
-    sourceAddr.mScope = kAudioDevicePropertyScopeOutput;
-    sourceAddr.mElement = kAudioObjectPropertyElementMaster;
-    UInt32 dataSourceId = 0;
-    UInt32 dataSourceIdSize = sizeof(UInt32);
-    AudioObjectGetPropertyData(mID, &sourceAddr, 0, NULL, &dataSourceIdSize, &dataSourceId);
-
-    switch (dataSourceId)
-        {
-            case 'ispk':
-                printf("### kAudioDevicePropertyDataSource=internal speaker");
-                break;
-            case 'espk':
-                printf("### kAudioDevicePropertyDataSource=external speaker");
-                break;
-            case 'hdpn':
-                printf("### kAudioDevicePropertyDataSource=headphones");
-                break;
-            default:
-                printf("### kAudioDevicePropertyDataSource=unknown");
-        };
-    printf("### kAudioDevicePropertyDataSource=%s",codeToString(dataSourceId));
-   //'ispk' => internal speakers
-   //'hdpn' => headphones
-   return dataSourceId == 'hdpn';
+//    AudioObjectPropertyAddress sourceAddr;
+//    sourceAddr.mSelector = kAudioDevicePropertyDataSource;
+//    sourceAddr.mScope = kAudioDevicePropertyScopeOutput;
+//    sourceAddr.mElement = kAudioObjectPropertyElementMaster;
+//    UInt32 dataSourceId = 0;
+//    UInt32 dataSourceIdSize = sizeof(UInt32);
+//    AudioObjectGetPropertyData(mID, &sourceAddr, 0, NULL, &dataSourceIdSize, &dataSourceId);
+//
+//    switch (dataSourceId)
+//        {
+//            case 'ispk':
+//                printf("### kAudioDevicePropertyDataSource=internal speaker");
+//                break;
+//            case 'espk':
+//                printf("### kAudioDevicePropertyDataSource=external speaker");
+//                break;
+//            case 'hdpn':
+//                printf("### kAudioDevicePropertyDataSource=headphones");
+//                break;
+//            default:
+//                printf("### kAudioDevicePropertyDataSource=unknown");
+//        };
+//    printf("### kAudioDevicePropertyDataSource=%s",codeToString(dataSourceId));
+//   //'ispk' => internal speakers
+//   //'hdpn' => headphones
+//   return dataSourceId == 'hdpn';
 }

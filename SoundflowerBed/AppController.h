@@ -22,7 +22,9 @@
 	int				m16StartIndex;
     
     BOOL            firstTime;
-    
+    AudioDeviceID   connectedHeadphonesID;
+    NSString        *headphonesName;
+
     
     //Anastasiy
     int currentBufferTimerSize;
