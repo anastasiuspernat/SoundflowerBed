@@ -392,7 +392,10 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
-	[self buildDeviceList];
+    printf("#### refreshDevices");
+    headphonesName = @"";
+
+    [self buildDeviceList];
 	[mSbItem setMenu:nil];
 	//[mMenu dealloc];
     [mMenu release];
@@ -462,6 +465,7 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 		[self buildRoutingMenu:NO];
     }
 
+    printf("#### refreshDevices END");
 
     [pool release];
 }
@@ -613,7 +617,7 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 {
 	NSMenuItem *item;
     
-    connectedHeadphonesID = 0;
+    headphonesName = @"";
     
 
 	mMenu = [[NSMenu alloc] initWithTitle:@"Main Menu"];
@@ -696,7 +700,7 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
                 
                 if (ad.isHeadphones())
                 {
-                    headphonesName = [NSString stringWithUTF8String: (*i).mName];
+                    headphonesName = [[NSString alloc] initWithUTF8String: (*i).mName];
                     printf("!!!!!!! HEADPHONES ARE AT %s",(*i).mName);
                 }
 			}
@@ -1175,11 +1179,15 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 
 - (void)activateHeadphonesIfNeeded
 {
-    int index = [mMenu indexOfItemWithTitle:headphonesName];
-    printf("activateHeadphonesIfNeeded: %d",index);
-    if (index>=0)
+    printf("#### activateHeadphonesIfNeeded %s",[headphonesName UTF8String]);
+    if (mMenu != NULL)
     {
-        [self outputDeviceSelected:[mMenu itemAtIndex:index]];
+        int index = [mMenu indexOfItemWithTitle:headphonesName];
+        printf("activateHeadphonesIfNeeded: %d",index);
+        if (index>=0)
+        {
+            [self outputDeviceSelected:[mMenu itemAtIndex:index]];
+        }
     }
 }
 
@@ -1274,6 +1282,7 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 		
 - (void)writeGlobalPrefs
 {
+    printf("############ writeGlobalPrefs");
 	CFStringRef cfstr = CFStringCreateWithCString(kCFAllocatorSystemDefault, [[mCur2chDevice title] cString], kCFStringEncodingMacRoman);
 	CFPreferencesSetAppValue(CFSTR("2ch Output Device"), cfstr, kCFPreferencesCurrentApplication);
 	CFRelease(cfstr); 
