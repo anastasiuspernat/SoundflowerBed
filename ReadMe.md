@@ -1,4 +1,4 @@
-# SoundflowerBed 2.1.0
+# SoundflowerBed 2.1.1
 
 SoundflowerBed is an application that resides in the menu bar allowing you to tap into Soundflower channels and route them to an audio device.
 
