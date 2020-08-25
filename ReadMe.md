@@ -7,7 +7,7 @@ Fixed to work on Catalina, also saves default device on menu change
 
 ## Download
 
-Clone this project and compile SoundflowerBed using Xcode 6 or head over to the [releases page](https://github.com/anastasiuspernat/SoundflowerBed/releases/) and download a compiled binary.
+Clone this project and compile SoundflowerBed using Xcode 11 (Xcode 12 preferred) or head over to the [releases page](https://github.com/anastasiuspernat/SoundflowerBed/releases/) and download a compiled binary.
 
 ## Changelog
 
