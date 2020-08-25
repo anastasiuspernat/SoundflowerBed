@@ -31,6 +31,6 @@
 	<key>NSUIElement</key>
 	<integer>1</integer>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Uses mic to provide audio interface</string>
+	<string>Uses mic to provide audio interface. Will not work without mic acccess.</string>
 </dict>
 </plist>
