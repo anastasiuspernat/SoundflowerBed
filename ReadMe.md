@@ -11,10 +11,11 @@ Clone this project and compile SoundflowerBed using Xcode 6 or head over to the 
 
 ## Changelog
 
-### 2.1.0
+### 2.1.1
 
 * Updated to work on OS X 10.15
 * Default device now saved into preferences on menu change (instead of app exit)
+* Auto-switches output to a Bluetooth device when it's connected
 
 ## Copyrights
 
