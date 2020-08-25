@@ -1,13 +1,13 @@
 # SoundflowerBed 2.1.0
 
+SoundflowerBed is an application that resides in the menu bar allowing you to tap into Soundflower channels and route them to an audio device.
+
 Forked from https://github.com/mLupine/SoundflowerBed and https://github.com/RogueAmoeba/Soundflower-Original
 Fixed to work on Catalina, also saves default device on menu change 
 
-SoundflowerBed is an application that resides in the menu bar allowing you to tap into Soundflower channels and route them to an audio device.
-
 ## Download
 
-Clone this project and compile SoundflowerBed using Xcode 6 or head over to the [releases page](https://github.com/mLupine/SoundflowerBed/releases) and download a compiled binary.
+Clone this project and compile SoundflowerBed using Xcode 6 or head over to the [releases page](https://github.com/anastasiuspernat/SoundflowerBed/releases/) and download a compiled binary.
 
 ## Changelog
 
