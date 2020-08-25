@@ -75,7 +75,8 @@ void	AudioDeviceList::BuildList()
 			dev.GetName(d.mName, sizeof(d.mName));
 			mDevices.push_back(d);
             
-            //printf("name:%s,%lu\n",d.mName,d.mID);
+            
+            printf("### GOT DEVICE name:%s,%lu isHeadphones:%d\n",d.mName,(unsigned int)d.mID,dev.isHeadphones());
 		}
 	}
     if (0 == nDevices){

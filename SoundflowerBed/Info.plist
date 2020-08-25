@@ -30,5 +30,7 @@
 	<string>Copyright © 2005 ma++ ingalls | Copyright © 2014 Maciej Wilczyński [lupine.cc] &lt;maciej@lupine.cc&gt;</string>
 	<key>NSUIElement</key>
 	<integer>1</integer>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Uses mic to provide audio interface</string>
 </dict>
 </plist>

@@ -7,6 +7,7 @@
 #include "AudioDeviceList.h"
 
 
+
 @interface AppController : NSObject
 {
 	NSStatusItem	*mSbItem;
@@ -19,7 +20,15 @@
 	BOOL			menuItemVisible;
     int             m2StartIndex;   //Menu Index of "None"
 	int				m16StartIndex;
-	
+    
+    BOOL            firstTime;
+    
+    
+    //Anastasiy
+    int currentBufferTimerSize;
+    AudioDeviceList::DeviceList::iterator oldSelected;
+    bool oldSelectedSet;
+
 	NSMenuItem		*mCur2chDevice;
 	NSMenuItem		*mCur16chDevice;
 	NSMenuItem		*mCur2chBufferSize;
@@ -61,6 +70,10 @@
 - (IBAction)refreshDevices;
 
 - (IBAction)outputDeviceSelected:(id)sender;
+
+// Anastasiy
+- (void)bufferSizeChanged2chTimer:(id)sender;
+
 - (IBAction)bufferSizeChanged2ch:(id)sender;
 - (IBAction)bufferSizeChanged16ch:(id)sender;
 - (IBAction)cloningChanged:(id)sender; //iSchemy

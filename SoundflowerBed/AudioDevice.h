@@ -69,6 +69,8 @@ public:
 	int		CountChannels();
 	char *	GetName(char *buf, UInt32 maxlen);
 
+    bool    isHeadphones();
+
 public:
 	AudioDeviceID					mID;
 	bool							mIsInput;

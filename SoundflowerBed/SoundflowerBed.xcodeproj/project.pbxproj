@@ -14,7 +14,6 @@
 		222FE3370EBB6D9900FD13FC /* AudioRingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F591DDAD0310C0D001FEEC38 /* AudioRingBuffer.h */; };
 		222FE3380EBB6D9900FD13FC /* HelpWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = F57307580312E91E01FEEC38 /* HelpWindowController.h */; };
 		222FE33A0EBB6D9900FD13FC /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
-		222FE33B0EBB6D9900FD13FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		222FE33C0EBB6D9900FD13FC /* sf16.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9CCA5E606ED143E0076FAC2 /* sf16.tiff */; };
 		222FE33D0EBB6D9900FD13FC /* sf2.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9CCA5E706ED143E0076FAC2 /* sf2.tiff */; };
 		222FE33E0EBB6D9900FD13FC /* menuIcon.tiff in Resources */ = {isa = PBXBuildFile; fileRef = C9CCA5E806ED143E0076FAC2 /* menuIcon.tiff */; };
@@ -37,7 +36,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		222FE3510EBB6D9900FD13FC /* SoundflowerBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoundflowerBed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		229B366F0EDC1DB500623222 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -166,7 +164,6 @@
 				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
 				EB6C9F5C175A3004003CD86F /* VolumeView.xib */,
 				229B366F0EDC1DB500623222 /* Info.plist */,
-				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -233,6 +230,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* AudioThru */;
@@ -250,7 +248,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				222FE33A0EBB6D9900FD13FC /* MainMenu.nib in Resources */,
-				222FE33B0EBB6D9900FD13FC /* InfoPlist.strings in Resources */,
 				222FE33C0EBB6D9900FD13FC /* sf16.tiff in Resources */,
 				222FE33D0EBB6D9900FD13FC /* sf2.tiff in Resources */,
 				222FE33E0EBB6D9900FD13FC /* menuIcon.tiff in Resources */,
@@ -281,14 +278,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				089C165DFE840E0CC02AAC07 /* English */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
 		29B97318FDCFA39411CA2CEA /* MainMenu.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -326,6 +315,10 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications/Soundflower;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-D__ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=1",
+				);
 				PRODUCT_NAME = SoundflowerBed;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -340,13 +333,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = "$(SRCROOT)/../Build/InstallerRoot";
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /Applications/Soundflower;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-D__ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=1",
+				);
 				PRODUCT_NAME = SoundflowerBed;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (

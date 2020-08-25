@@ -14,6 +14,10 @@ AudioThruEngine	*gThruEngine2 = NULL;
 AudioThruEngine	*gThruEngine16 = NULL;
 Boolean startOnAwake = false;
 
+#define KEY_SELECTED_DEVICE @"selectedDevice"
+#define KEY_SELECTED_DEVICE_SECONDARY @"selectedDeviceSecondary"
+
+
 void	CheckErr(OSStatus err)
 {
 	if (err) {
@@ -438,9 +442,14 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 			break;
         }
     }
-	if (i == thelist.end()) // we didn't find it, turn selection to none
+	if (i == thelist.end() && !oldSelectedSet) // we didn't find it, turn selection to none
+        // Anastasiy: turn selection to previous
+    {
 		[self outputDeviceSelected:[mMenu itemAtIndex:m16StartIndex]];
+    }
 	else{
+        oldSelected = i;
+        oldSelectedSet = true;
         [[mMenu itemAtIndex:m16StartIndex] setState:NSOffState];
         
         for (int i = 0; i < 64; i++){
@@ -454,7 +463,8 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 		[self buildRoutingMenu:NO];
     }
 
-	[pool release];
+
+    [pool release];
 }
 
 
@@ -534,7 +544,8 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 - (id)init
 {
 	mOutputDeviceList = NULL;
-	
+    oldSelectedSet = false;
+
 	mSoundflower2Device = 0;
 	mSoundflower16Device = 0;
 	mNchnls2 = 0;
@@ -652,7 +663,16 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
         //Volume Slider
         NSMenuItem *volumeMenu = [mMenu addItemWithTitle:@"Volume2" action:
                 @selector(doNothing) keyEquivalent:@""];
-        [volumeMenu setView:[mVolumeViewController2ch view]];
+        try
+        {
+            
+            // Anastasiy: this causes crash
+//            [volumeMenu setView:[mVolumeViewController2ch view]];
+
+        } catch(NSException *exception)
+        {
+            
+        }
         [[mVolumeViewController2ch view] setEnabled:false];
         
 		item = [mMenu addItemWithTitle:@"None (OFF)" action:@selector(outputDeviceSelected:) keyEquivalent:@""];
@@ -745,7 +765,12 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
         
         NSMenuItem *volumeMenu2 = [mMenu addItemWithTitle:@"Volume16" action:
                                    @selector(doNothing) keyEquivalent:@""];
-        [volumeMenu2 setView:[mVolumeViewController16ch view]];
+        try {
+            // Anastasiy: this causes crash
+//            [volumeMenu2 setView:[mVolumeViewController16ch view]];
+        } catch (NSException *exception) {
+            
+        }
         [[mVolumeViewController16ch view] setEnabled:false];
         
 		item = [mMenu addItemWithTitle:@"None (OFF)" action:@selector(outputDeviceSelected:) keyEquivalent:@""];
@@ -848,7 +873,10 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 
 - (void)awakeFromNib
 {
-	[[NSApplication sharedApplication] setDelegate:self];
+    firstTime = true;
+
+    [[NSApplication sharedApplication] setDelegate:self];
+    
     
     mVolumeViewController2ch = [[VolumeViewController alloc] initWithNibName:@"VolumeView" bundle:nil];
     NSSlider *slider = (NSSlider *)[[mVolumeViewController2ch view] slider];
@@ -859,6 +887,7 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 	
 	[self buildDeviceList];
 	
+    
 	mSbItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
 	[mSbItem retain];
 	
@@ -898,6 +927,12 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 		CFRunLoopAddSource(CFRunLoopGetCurrent(),
                         IONotificationPortGetRunLoopSource(notify),
                         kCFRunLoopCommonModes);
+    //Anastasiy
+//    [self startBufferSizeTimer];
+ 
+    //Anastasiy
+    
+    
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
@@ -912,6 +947,33 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 		[self writeGlobalPrefs];
 }
 
+// Anastasiy
+- (void)bufferSizeChanged2chTimer:(id)sender
+{
+    NSLog(@"SOUNDFLOWERBED TEST 1");
+    NSLog(@"SOUNDFLOWERBED TEST 2");
+    if (currentBufferTimerSize == 1024)
+    {
+        currentBufferTimerSize = 2048;
+    } else
+        {
+            currentBufferTimerSize = 1024;
+        }
+    NSLog(@"SOUNDFLOWERBED TEST 3");
+    gThruEngine2->SetBufferSize(currentBufferTimerSize);
+    NSLog(@"SOUNDFLOWERBED TEST 4");
+
+}
+
+- (void)startBufferSizeTimer
+{
+//     Anastasiy disabled
+    [NSTimer scheduledTimerWithTimeInterval:60.0 * 30 // once in 30 minutes
+                                     target:self
+                                   selector:@selector(bufferSizeChanged2chTimer:)
+                                   userInfo:nil
+                                    repeats:YES];
+}
 
 - (IBAction)bufferSizeChanged2ch:(id)sender
 {
@@ -1086,6 +1148,25 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 		// now set the menu
 		[self buildRoutingMenu:NO];
 	}
+    
+    [self writeGlobalPrefs];
+
+//    NSNumber *oldDevice = [[NSUserDefaults standardUserDefaults]
+//        objectForKey:KEY_SELECTED_DEVICE_SECONDARY];
+//    if (oldDevice == NULL)
+//    {
+//        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:val] forKey:KEY_SELECTED_DEVICE_SECONDARY];
+//    } else
+//    {
+//        NSNumber *currentDevice = [[NSUserDefaults standardUserDefaults]
+//            objectForKey:KEY_SELECTED_DEVICE];
+//        if (currentDevice != NULL)
+//        {
+//            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:[currentDevice intValue]] forKey:KEY_SELECTED_DEVICE_SECONDARY];
+//        }
+//    }
+//    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:val] forKey:KEY_SELECTED_DEVICE];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 
@@ -1098,6 +1179,8 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 - (void)readGlobalPrefs
 {
 	CFStringRef strng  = (CFStringRef) CFPreferencesCopyAppValue(CFSTR("2ch Output Device"), kCFPreferencesCurrentApplication);
+    
+    
 	if (strng) {
 		char name[64];
 		CFStringGetCString(strng, name, 64, kCFStringEncodingMacRoman);
@@ -1119,11 +1202,11 @@ MySleepCallBack(void * x, io_service_t y, natural_t messageType, void * messageA
 	}
 	
 	CFNumberRef num = (CFNumberRef) CFPreferencesCopyAppValue(CFSTR("2ch buffer size"), kCFPreferencesCurrentApplication);
-	if (num) {
+	if (num != NULL) {
 		UInt32 val;
 		CFNumberGetValue(num, kCFNumberLongType, &val);
-        if (num != nil) {
-            CFRelease(num);
+        if (num != NULL) {
+//            CFRelease(num);
         }
 		
 		switch (val) {

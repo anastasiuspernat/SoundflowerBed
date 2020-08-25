@@ -191,6 +191,59 @@ int		AudioDevice::CountChannels()
 
 char *	AudioDevice::GetName(char *buf, UInt32 maxlen)
 {
-	verify_noerr(AudioDeviceGetProperty(mID, 0, mIsInput, kAudioDevicePropertyDeviceName, &maxlen, buf));
+//    AudioDeviceGetProperty(mID, 0, mIsInput, kAudioDevicePropertyChannelCategoryName, &maxlen, buf);
+//    printf("######## GOT DEVICE CATEGORY %s",buf);
+
+    verify_noerr(AudioDeviceGetProperty(mID, 0, mIsInput, kAudioDevicePropertyDeviceName, &maxlen, buf));
 	return buf;
+}
+
+static char *codeToString(UInt32 code)
+{
+    static char str[5] = { '\0' };
+    UInt32 swapped = CFSwapInt32HostToBig(code);
+    memcpy(str, &swapped, sizeof(swapped));
+    return str;
+}
+
+bool AudioDevice::isHeadphones()
+{
+//   UInt32 size = sizeof(mID);
+//   verify_noerr(AudioHardwareGetProperty(kAudioHardwarePropertyDefaultSystemOutputDevice, &size, &mID));
+//   NSCAssert((err == noErr), @"AudioHardwareGetProperty failed to get the kAudioHardwarePropertyDefaultSystemOutputDevice property");
+   //To be notified when something is plugged/unplugged into the headphones jack
+   //listen for a kAudioDevicePropertyDataSource or kAudioDevicePropertyDataSources notification on deviceID
+   
+   //Check if headphones are plugged in right now:
+//   UInt32 dataSource;
+//    UInt32 size = sizeof(dataSource);
+//   verify_noerr(AudioDeviceGetProperty(mID, 0, 0, kAudioDevicePropertyDataSource, &size, &dataSource));
+
+    
+    AudioObjectPropertyAddress sourceAddr;
+    sourceAddr.mSelector = kAudioDevicePropertyDataSource;
+    sourceAddr.mScope = kAudioDevicePropertyScopeOutput;
+    sourceAddr.mElement = kAudioObjectPropertyElementMaster;
+    UInt32 dataSourceId = 0;
+    UInt32 dataSourceIdSize = sizeof(UInt32);
+    AudioObjectGetPropertyData(mID, &sourceAddr, 0, NULL, &dataSourceIdSize, &dataSourceId);
+
+    switch (dataSourceId)
+        {
+            case 'ispk':
+                printf("### kAudioDevicePropertyDataSource=internal speaker");
+                break;
+            case 'espk':
+                printf("### kAudioDevicePropertyDataSource=external speaker");
+                break;
+            case 'hdpn':
+                printf("### kAudioDevicePropertyDataSource=headphones");
+                break;
+            default:
+                printf("### kAudioDevicePropertyDataSource=unknown");
+        };
+    printf("### kAudioDevicePropertyDataSource=%s",codeToString(dataSourceId));
+   //'ispk' => internal speakers
+   //'hdpn' => headphones
+   return dataSourceId == 'hdpn';
 }
