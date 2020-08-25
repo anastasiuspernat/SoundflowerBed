@@ -14,7 +14,7 @@ Clone this project and compile SoundflowerBed using Xcode 6 or head over to the 
 ### 2.1.0
 
 * Updated to work on OS X 10.15
-* Default device now saved into preferences on menu change (instead of appp exit)
+* Default device now saved into preferences on menu change (instead of app exit)
 
 ## Copyrights
 
